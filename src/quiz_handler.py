@@ -66,7 +66,7 @@ class Quiz:
             fetched_query = self.db_connection.fetch_question(topic_name, question_id)
             self.db_connection.close_connection()
             question: dict = fetched_query[0]
-            print(cs(f"question: {question['question']}", "yellow"))
+            print(cs(f"Question: {question['question']}", "yellow"))
             anwers: list = [
                 question["correct_answer"],
                 question["wrong_answer1"],
