@@ -226,7 +226,3 @@ class Quiz:
 
 if __name__ == "__main__":
     test = Quiz()
-    # test.take_quiz()
-    # print("score:", test.score)
-    # test.add_question()
-    print(test.get_tables())

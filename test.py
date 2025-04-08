@@ -14,6 +14,7 @@ def test_connect_to_db(test_db_handler):
     assert test_db_handler.messenger
     assert test_db_handler.db_connection.cursor
 
+
 def test_search_everything(test_db_handler):
     expected_result: list = []
     test_db_handler.connect_to_db()

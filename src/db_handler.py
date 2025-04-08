@@ -1,5 +1,11 @@
 import psycopg2
+import environ
 from dataclasses import dataclass
+from pathlib import Path
+
+env = environ.Env()
+BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(str(BASE_DIR / ".env"))
 
 
 def check_connection(function):
@@ -16,11 +22,11 @@ def check_connection(function):
 class DBHandler:
     def __init__(self):
         self.config: dict = {
-            "db_name": "quiz_db",
-            "database_user": "postgres",
-            "postgres_host": "localhost",
-            "password": "postgres",
-            "port": "5432",
+            "db_name": env.str("DB_NAME"),
+            "database_user": env.str("DB_USERNAME"),
+            "postgres_host": env.str("DB_HOST"),
+            "password": env.str("DB_PASSWORD"),
+            "port": env.str("DB_PORT"),
         }
 
     def connect_to_db(self) -> None:
