@@ -2,6 +2,19 @@ from .db_handler import DBHandler
 import random
 import time
 from stringcolor import cs
+from dataclasses import dataclass
+
+
+@dataclass
+class Question:
+    topic: str = ""
+    submodule: str = "Unknown"
+    difficulty: int = 1
+    question: str = ""
+    correct_answer: str = ""
+    wrong_answer1: str = ""
+    wrong_answer2: str = ""
+    wrong_answer3: str = ""
 
 
 class Quiz:
@@ -102,6 +115,7 @@ class Quiz:
         """
         print("Here are the available topics that already exist: ", self.tables)
         lacking_tables = []
+        question_to_be_added = Question()
         for table in self.tables:
             if table not in self.quiz_tables:
                 lacking_tables.append(table)
@@ -113,50 +127,49 @@ class Quiz:
         while True:
             table_name = input("Enter the name of the table: ")
             if table_name:
+                question_to_be_added.topic = table_name
                 break
         sub_module = input("Enter the sub module (optional): ")
         if not sub_module:
             sub_module = "Unknown"
+        question_to_be_added.submodule = sub_module
         while True:
             difficulty = input("Enter the difficulty: ")
             if difficulty.isnumeric():
+                question_to_be_added.difficulty = int(difficulty)
                 break
         while True:
             question = input("Enter the question: ")
             if question:
+                question_to_be_added.question = question
                 break
         while True:
             correct_answer = input("Enter the correct answer: ")
             if correct_answer:
+                question_to_be_added.correct_answer = correct_answer
                 break
         while True:
             wrong_answer1 = input("Enter the wrong answer 1: ")
             if wrong_answer1:
+                question_to_be_added.wrong_answer1 = wrong_answer1
                 break
         while True:
             wrong_answer2 = input("Enter the wrong answer 2: ")
             if wrong_answer2:
+                question_to_be_added.wrong_answer2 = wrong_answer2
                 break
         while True:
             wrong_answer3 = input("Enter the wrong answer 3: ")
             if wrong_answer3:
+                question_to_be_added.wrong_answer3 = wrong_answer3
                 break
         # mock with patch inputs for while loops with pytest
         # maybe even mock the whole function
-        query = [
-            table_name,
-            sub_module,
-            difficulty,
-            question,
-            correct_answer,
-            wrong_answer1,
-            wrong_answer2,
-            wrong_answer3,
-        ]
-        self.db_connection.add_question(query)
+
+        self.db_connection.add_question(question_to_be_added)
         self.tables = self.get_tables()
         self.quiz_tables = self.get_suitable_quiz_tables()
-        return query
+        return question_to_be_added
 
     def get_amount_of_questions(self, topic_name: str) -> list:
         """Get the IDs from all the questions that exist"""

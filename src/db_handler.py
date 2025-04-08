@@ -1,10 +1,23 @@
 import psycopg2
 import environ
+from dataclasses import dataclass
 from pathlib import Path
 
 env = environ.Env()
 BASE_DIR = Path(__file__).resolve().parent.parent
 environ.Env.read_env(str(BASE_DIR / ".env"))
+
+
+@dataclass
+class Question:
+    topic: str = ""
+    submodule: str = "Unknown"
+    difficulty: int = 1
+    question: str = ""
+    correct_answer: str = ""
+    wrong_answer1: str = ""
+    wrong_answer2: str = ""
+    wrong_answer3: str = ""
 
 
 def check_connection(function):
@@ -73,7 +86,7 @@ class DBHandler:
             return refined_result
 
     @check_connection
-    def add_question(self, query: list) -> None:
+    def add_question(self, question: Question) -> None:
         """
         [0] => main topic MUST BE FILLED
         [1] => sub topic
@@ -84,21 +97,31 @@ class DBHandler:
         [6] => wrong answer2 MUST BE FILLED
         [7] => wrong answer3 MUST BE FILLED
         """
-        if self.find_table(query[0]):
+        if self.find_table(question.topic):
             print("The topic table already exists")
         else:
-            self.create_new_topic_table(query[0])
+            self.create_new_topic_table(question.topic)
         try:
             self.connect_to_db()
-            topic_name = query[0]
-            query.pop(0)
+            topic_name = question.topic
             # query_string = f"{query[1]}, {query[2]}, {query[3]}, {query[4]}, {query[5]}, {query[6]}, {query[7]}"
             query_text = (
                 """INSERT INTO %s (sub_module, difficulty, question, correct_answer, wrong_answer1, wrong_answer2, wrong_answer3)
                 VALUES (%%s, %%s, %%s, %%s, %%s, %%s, %%s);"""
                 % topic_name
             )
-            self.messenger.execute(query_text, (query))
+            self.messenger.execute(
+                query_text,
+                (
+                    question.submodule,
+                    question.difficulty,
+                    question.question,
+                    question.correct_answer,
+                    question.wrong_answer1,
+                    question.wrong_answer2,
+                    question.wrong_answer3,
+                ),
+            )
         except psycopg2.OperationalError as e:
             print(f"Error {e}: Couldn't add the question in question...")
         else:
