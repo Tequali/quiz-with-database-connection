@@ -1,6 +1,5 @@
 import psycopg2
 import environ
-from dataclasses import dataclass
 from pathlib import Path
 
 env = environ.Env()
